@@ -1,6 +1,5 @@
 import os, time, sched
 import numpy as np
-import pandas as pd
 import librosa
 import sounddevice as sd
 import ccchord
@@ -8,6 +7,8 @@ import ccchord
 dir_path     = os.path.abspath('')
 cutdown_path = os.path.join(dir_path, 'music_cutdown')
 
+def sine_wave(f, sr, duration, phase=0):
+    return np.array([np.sin(2*np.pi*f*(t/sr)+phase) for t in range(int(sr*duration))])
 
 def play_sound(y, sr, stop_time=-1):
     s = sched.scheduler(time.time, time.sleep)

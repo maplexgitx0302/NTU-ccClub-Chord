@@ -1,5 +1,4 @@
 import os
-import requests
 from selenium import webdriver
 
 dir_path = os.path.dirname(os.path.realpath(__file__)) # directory path of the ccClub project
