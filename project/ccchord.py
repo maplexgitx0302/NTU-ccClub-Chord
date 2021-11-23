@@ -28,6 +28,24 @@ for i in range(len(pitch_index)):
     for pitch_name in pitch_index[i]:
         pitch_dict[pitch_name] = i
 
+def chord_padding(chord_str):
+    original_chord_list = chord_str.strip('|').replace(' ', '').split('|')
+    padding_chord_list = []
+    for i in range(len(original_chord_list)):
+        section_chord_list = original_chord_list[i].split(',')
+        if len(section_chord_list) == 1:
+            padding_chord_list += section_chord_list * 4
+        elif len(section_chord_list) == 2:
+            padding_chord_list.append(section_chord_list[0])
+            padding_chord_list.append(section_chord_list[0])
+            padding_chord_list.append(section_chord_list[1])
+            padding_chord_list.append(section_chord_list[1])
+        elif len(section_chord_list) == 4:
+            padding_chord_list += section_chord_list
+        else:
+            assert False, "Please check your chord string pairs (chord list)"
+    return padding_chord_list
+
 def chord_simplify(chord_str):
     if '/' in chord_str:
         chord_str = chord_str[:chord_str.index('/')]
@@ -59,7 +77,7 @@ def chord_simplify(chord_str):
         else:
             raise ChordError(chord_str)
 
-def chord_numeralize(capo, chord_str):
+def chord_numeralize(chord_str, capo):
     main_key = chord_str[0]
     if '#' in chord_str:
         main_key += '#'

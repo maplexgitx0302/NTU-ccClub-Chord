@@ -3,8 +3,10 @@ import re
 import subprocess
 from pytube import YouTube
 
-dir_path   = os.path.dirname(os.path.realpath(__file__)) # directory path of the ccClub project
-music_path = os.path.join(dir_path, 'music')             # directory path for saving wav files
+dir_path   = os.path.abspath('') # directory path of the ccClub project
+if os.path.isdir(os.path.join(dir_path, 'music_original')) == False:
+    os.mkdir(os.path.join(dir_path, 'music_original'))
+music_path = os.path.join(dir_path, 'music_original') # directory path for saving wav files
 
 def yt_wav(link, file_name=''):
     yt = YouTube(link)

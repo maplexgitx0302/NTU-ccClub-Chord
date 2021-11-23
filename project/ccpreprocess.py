@@ -32,7 +32,7 @@ def softmax(matrix):
     return exp_x / sum_x
 
 class Music():
-    def __init__(self, y, sr, tempo, sections, beats_per_section, slices_per_beat,
+    def __init__(self, title, y, sr, tempo, sections, beats_per_section, slices_per_beat,
                 f_min=-24, f_max=12, A4=440):
         '''
             Args:
@@ -47,6 +47,7 @@ class Music():
                 A4 : default Hz of A4
         '''
         self.length_per_slice = int(60 / tempo * sr / slices_per_beat) # the length of the array per slice
+        self.title = title
         self.y = y[:self.length_per_slice * slices_per_beat * beats_per_section * sections]
         self.sr = sr
         self.tempo = tempo
@@ -54,7 +55,10 @@ class Music():
         self.beats_per_section = beats_per_section
         self.slices_per_beat = slices_per_beat
         self.ks = [A4 * 2**(f/12) for f in range(f_min, f_max+1)] # frequencies to analyze
+        
+        print(f"Now extracting amplitude of {self.title} : ", end='')
         self.amplitude_matrix = self.extract_amplitude()          # shape = (frames, ks)
+        print(f" Extraction  complete!")
 
     def fourier(self, frame, k):
         frame_copy = np.array(frame.copy(), dtype='complex_')
@@ -65,7 +69,11 @@ class Music():
 
     def extract_amplitude(self):
         amplitude_matrix = []
+        process_counter = 0
         for frame in range(self.slices_per_beat * self.beats_per_section * self.sections):
+            if frame/(self.slices_per_beat * self.beats_per_section * self.sections) > 0.02*process_counter:
+                process_counter += 1
+                print('-', end='')
             start_index = frame * self.length_per_slice
             end_index   = (frame+1) * self.length_per_slice
             amplitude   = np.array([self.fourier(self.y[start_index:end_index], k) for k in self.ks])
