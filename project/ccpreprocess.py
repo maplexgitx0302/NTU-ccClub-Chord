@@ -1,8 +1,10 @@
 import os, time
 import numpy as np
-import ccplay
 
 dir_path = os.path.abspath('')
+
+def sine_wave(f, sr, duration, phase=0):
+    return np.array([np.sin(2*np.pi*f*(t/sr)+phase) for t in range(int(sr*duration))])
 
 def softmax(matrix):
     x = matrix - np.max(matrix, axis=1).reshape(-1,1)
@@ -70,8 +72,8 @@ class Music():
         else:
             amplitude_matrix = amplitude_matrix
         for frame in range(amplitude_matrix.shape[0]):
-            superposition = amplitude_matrix[frame][0] * ccplay.sine_wave(f=self.ks[0], sr=self.sr, duration=duration)
+            superposition = amplitude_matrix[frame][0] * sine_wave(f=self.ks[0], sr=self.sr, duration=duration)
             for i in range(1, amplitude_matrix.shape[1]):
-                superposition += amplitude_matrix[frame][i] * ccplay.sine_wave(f=self.ks[i], sr=self.sr, duration=duration)
+                superposition += amplitude_matrix[frame][i] * sine_wave(f=self.ks[i], sr=self.sr, duration=duration)
             composition = np.hstack((composition, superposition))
         return composition
