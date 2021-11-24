@@ -1,25 +1,40 @@
+'''
+    ccdownload is for downloading files we need:
+    * Please make sure you have 'ffmpeg' in local.
+    * YouTube has change something, if pytube is not work correctly, see:
+        https://stackoverflow.com/questions/70060263/pytube-attributeerror-nonetype-object-has-no-attribute-span
+'''
+
 import os
-import re
-import subprocess
-from pytube import YouTube
+import subprocess # for using 'ffmpeg' in terminal
+from pytube import YouTube # for downloading YouTube mp4 files
 
 dir_path   = os.path.abspath('') # directory path of the ccClub project
 if os.path.isdir(os.path.join(dir_path, 'music_original')) == False:
     os.mkdir(os.path.join(dir_path, 'music_original'))
 music_path = os.path.join(dir_path, 'music_original') # directory path for saving wav files
 
-def yt_wav(link, file_name=''):
+def yt_wav(link, title=''):
+    '''
+        link  : YouTube link (url)
+        title : name of the wav files
+
+        - abstract -
+        1. use pytube to get youtube object
+        2. download the lowest resolution video
+        3. convert the video into audio with 'ffmpeg'
+    '''
     yt = YouTube(link)
-    if file_name == '': file_name  = yt.title
-    file_name = re.sub('[/,\,.,-,?,!,@,#,$,%,^,&,*,~,`,(,),\[,\]]', '', file_name)
-    input_mp4  = os.path.join(music_path, f'{file_name}.mp4')
-    output_wav = os.path.join(music_path, f'{file_name}.wav')
-    print(f'Now processing {file_name} ... ', end='')
+    if title == '': title = yt.title
+    input_mp4  = os.path.join(music_path, f'{title}.mp4')
+    output_wav = os.path.join(music_path, f'{title}.wav')
+    print(f'Now processing {title} ... ', end='')
     if not os.path.isfile(output_wav):
         print('Downloading ... ', end='')
         ys = yt.streams.get_lowest_resolution()
-        ys.download(output_path=music_path, filename=f'{file_name}.mp4')
+        ys.download(output_path=music_path, filename=f'{title}.mp4')
         print('Converting to wav ... ', end='')
+        # use local 'ffmpeg' to transform mp4 into wav
         subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y' ,'-i', input_mp4, output_wav])
         subprocess.run(['rm', input_mp4])
         print(f'Complete!')
