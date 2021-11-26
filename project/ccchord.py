@@ -54,7 +54,7 @@ def chord_padding(chord_str):
             # [C,G,Am,F] -> [C,G,Am,F]
             padding_chord_list += section_chord_list
         else:
-            assert False, "Please check your chord string pairs (chord list)"
+            assert False, f"Please check your chord string pairs (chord list) -> {section_chord_list}"
     return padding_chord_list
 
 def chord_simplify(chord):

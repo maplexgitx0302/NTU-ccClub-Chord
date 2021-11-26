@@ -5,8 +5,10 @@
 
 import os, time
 import numpy as np
+import librosa
 
 dir_path = os.path.abspath('')
+trim_path = os.path.join(dir_path, 'music_trim')
 
 def softmax(matrix):
     '''
@@ -22,18 +24,16 @@ def softmax(matrix):
     return exp_x / sum_x
 
 class Music():
-    def __init__(self, title, y, sr, tempo, sections, beats_per_section, slices_per_beat,
-                f_min=-24, f_max=24, A4=440):
+    def __init__(self, title, tempo, sections, beats_per_section, slices_per_beat,
+                f_min=-36, f_max=27, A4=440):
         '''
             title : title of the song
-            y : wave array
-            sr : sampling rate
             tempo : beats per minute (bpm)
             sections : number of sections to simplify
             beats_per_section : number of beats per section
             slices_per_beat : number of slices per beat
-            f_min : minimum frequency to analyze
-            f_max : maximum frequency to analyze
+            f_min : minimum frequency to analyze (default=A1)
+            f_max : maximum frequency to analyze (default=C7)
             A4 : default Hz of A4
 
             - abstract -
@@ -41,9 +41,10 @@ class Music():
             2. use fft to count the amplitude in frequency space
             3. if needed, use com 'composite_wave' to listen to the fft audio
         '''
-        self.title = title
+        y, sr = librosa.load(os.path.join(trim_path, f"{title}.wav"))
         self.y = y
         self.sr = sr
+        self.title = title
         self.tempo = tempo
         self.sections = sections
         self.beats_per_section = beats_per_section
@@ -60,9 +61,9 @@ class Music():
             2. use numpy fft and get the right frequency
 
             - mathematical detail -
-            A(f) = Sum_t(A(t)*exp(-2*i*pi*t))     # theoretical
+            A(f) = Sum_t(A(t)*exp(-2*i*pi*f*t))   # theoretical
             A(k) = Sum_m(A(m)*exp(-2*i*pi*m*k/n)) # numpy fft
-            By t = m * (1/sr), we get f/sr = k/n
+            By t = m * (1/sr), e.g. t=1 -> m=sr, we get f/sr = k/n
             Finally k = n*f/sr, where k is the index in numpy fft result
 
             ref : https://numpy.org/doc/stable/reference/routines.fft.html#module-numpy.fft
