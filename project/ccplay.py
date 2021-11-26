@@ -11,7 +11,7 @@ import sounddevice as sd
 import ccchord
 
 dir_path     = os.path.abspath('')
-cutdown_path = os.path.join(dir_path, 'music_cutdown')
+trim_path = os.path.join(dir_path, 'music_trim')
 
 def play_sound(y, sr, stop_time=-1):
     '''
@@ -47,7 +47,7 @@ def display_chord(music_data, delay=0.4, stop_time=-1):
     original_chord_list = music_data['Chords'].strip('|').replace(' ', '').split('|')
     padding_chord_list  = ccchord.chord_padding(chord_str=music_data['Chords'])
     
-    y, sr = librosa.load(os.path.join(cutdown_path, f"{music_data['Title']}.wav"))
+    y, sr = librosa.load(os.path.join(trim_path, f"{music_data['Title']}.wav"))
     second_per_tempo = 60 / music_data['Tempo']
     s = sched.scheduler(time.time, time.sleep)
 
