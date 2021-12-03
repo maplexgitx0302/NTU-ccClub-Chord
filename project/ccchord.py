@@ -100,7 +100,7 @@ def chord_simplify(chord):
         else:
             assert False, print(f"Please Check Your Chord -> {chord}")
 
-def chord_numeralize(chord, capo):
+def chord_numeralize(chord, capo=0, major_pitch_weight=1):
     '''
         chord : single chord string in the chord list
         capo  : capo of the song
@@ -119,37 +119,60 @@ def chord_numeralize(chord, capo):
     pitch = int((pitch_dict[main_key] + capo) % 12)
     if main_key == chord:
         # major : 1 3 5
-        chord_array[pitch] += 1
+        chord_array[pitch] += 1 * major_pitch_weight
         chord_array[(pitch + 4)%12] += 1
         chord_array[(pitch + 4 + 3)%12] += 1
     elif len(main_key) == len(chord) - 1 and chord[-1] == 'm':
         # minor : 1 b3 5
-        chord_array[pitch] += 1
+        chord_array[pitch] += 1 * major_pitch_weight
         chord_array[(pitch + 3)%12] += 1
         chord_array[(pitch + 3 + 4)%12] += 1
     elif 'sus4' in chord:
         # sus4 : 1 4 5
-        chord_array[pitch] += 1
+        chord_array[pitch] += 1 * major_pitch_weight
         chord_array[(pitch + 5)%12]
         chord_array[(pitch + 5 + 2)%12] += 1
     elif 'maj7' in chord:
         # maj7 : 1 3 5 7
-        chord_array[pitch] += 1
+        chord_array[pitch] += 1 * major_pitch_weight
         chord_array[(pitch + 4)%12] += 1
         chord_array[(pitch + 4 + 3)%12] += 1
         chord_array[(pitch + 4 + 3 + 4)%12] += 1
     elif 'm7' in chord:
         # m7 : 1 b3 5 b7
-        chord_array[pitch] += 1
+        chord_array[pitch] += 1 * major_pitch_weight
         chord_array[(pitch + 3)%12] += 1
         chord_array[(pitch + 3 + 4)%12] += 1
         chord_array[(pitch + 3 + 4 + 3)%12] += 1
     elif '7' in chord:
         # 7 : 1 3 5 b7
-        chord_array[pitch] += 1
+        chord_array[pitch] += 1 * major_pitch_weight
         chord_array[(pitch + 4)%12] += 1
         chord_array[(pitch + 4 + 3)%12] += 1
         chord_array[(pitch + 4 + 3 + 3)%12] += 1
     else:
         assert False, print(f"Please Check Your Chord -> {chord}")
-    return chord_array / np.linalg.norm(chord_array)
+    # return chord_array / np.linalg.norm(chord_array)
+    return chord_array / np.sum(chord_array)
+
+def chord_inverse(chord_nparray, num_candidate=3, capo=0):
+    '''
+    
+    '''
+    candidate_pitch = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+    candidate_chord = []
+    capo_pitch = []
+    for i in range(12):
+        capo_pitch.append(candidate_pitch[(i-capo)%12])
+    suffix = ['', 'm', 'sus4', 'maj7', 'm7', '7']
+    for i in range(len(candidate_pitch)):
+        for j in range(len(suffix)):
+            chord = chord_numeralize(candidate_pitch[i]+suffix[j], capo=0, major_pitch_weight=1)
+            candidate_chord.append([capo_pitch[i]+suffix[j], chord])
+    
+    def cos_loss(y_pred, y_true):
+        cos = (np.dot(y_pred, y_true))/(np.linalg.norm(y_pred)*np.linalg.norm(y_true))
+        return -cos
+
+    candidate_chord.sort(key=lambda x: cos_loss(chord_nparray, x[1]))
+    return [x[0] for x in candidate_chord[:num_candidate]]
