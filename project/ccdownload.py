@@ -36,7 +36,7 @@ def yt_wav(link, title=''):
         print('Converting to wav ... ', end='')
         # use local 'ffmpeg' to transform mp4 into wav
         subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y' ,'-i', input_mp4, output_wav])
-        subprocess.run(['rm', input_mp4])
+        os.remove(input_mp4)
         print(f'Complete!')
     else:
         print(f'File already exists!')
