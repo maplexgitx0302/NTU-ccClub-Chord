@@ -175,4 +175,7 @@ def chord_inverse(chord_nparray, num_candidate=3, capo=0):
         return -cos
 
     candidate_chord.sort(key=lambda x: cos_loss(chord_nparray, x[1]))
-    return [x[0] for x in candidate_chord[:num_candidate]]
+    if num_candidate == 1:
+        return candidate_chord[0][0]
+    else:
+        return [x[0] for x in candidate_chord[:num_candidate]]

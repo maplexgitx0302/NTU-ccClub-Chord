@@ -31,7 +31,7 @@ def play_sound(y, sr, stop_time=-1):
     s.run()
 
 
-def display_chord(music_data, delay=0.4, stop_time=-1):
+def display_chord(music_data, delay=0.4, stop_time=-1, padding_chord_list=None):
     '''
         music_data : a data of pandas read_excel format (same as the excel format)
         delay : since the music play will delay for a little time, we purposely delay the printed chords
@@ -44,8 +44,9 @@ def display_chord(music_data, delay=0.4, stop_time=-1):
         4. set the delay time to let printing chords and playing music are simultaneously
     '''
     # transform the chord string into chord list, and also pad the chords
-    original_chord_list = music_data['Chords'].strip('|').replace(' ', '').split('|')
-    padding_chord_list  = ccchord.chord_padding(chord_str=music_data['Chords'])
+    if padding_chord_list == None:
+        original_chord_list = music_data['Chords'].strip('|').replace(' ', '').split('|')
+        padding_chord_list  = ccchord.chord_padding(chord_str=music_data['Chords'])
     
     y, sr = librosa.load(os.path.join(trim_path, f"{music_data['Title']}.wav"))
     second_per_tempo = 60 / music_data['Tempo']
@@ -60,6 +61,7 @@ def display_chord(music_data, delay=0.4, stop_time=-1):
         
         if stop_time != -1 and 4*i*second_per_tempo > stop_time:
             # print until the music stopped
+            s.enter(stop_time, priority=0, action=sd.stop)
             break
         
         # print chords and print the process line (|..|..|..|..)
@@ -72,6 +74,6 @@ def display_chord(music_data, delay=0.4, stop_time=-1):
             else:
                 s.enter(delay=4*i*second_per_tempo + second_per_slice*t, priority=1, action=print, argument=(print_dot,), kwargs={'end':''})
     print(f"Now playing {music_data['Title']} with Key={music_data['Tune']} and Capo={music_data['Capo']}")
-    play_sound(y, sr, stop_time)
+    sd.play(y / np.max(np.abs(y)), sr) # normalize the wav array
     time.sleep(delay) # delay the printing chords to match with the music
     s.run()
