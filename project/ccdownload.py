@@ -9,7 +9,7 @@ import os
 import subprocess # for using 'ffmpeg' in terminal
 from pytube import YouTube # for downloading YouTube mp4 files
 
-dir_path   = os.path.abspath('') # directory path of the ccClub project
+dir_path   = os.path.dirname(__file__) # directory path of the ccClub project
 if os.path.isdir(os.path.join(dir_path, 'music_original')) == False:
     os.mkdir(os.path.join(dir_path, 'music_original'))
 music_path = os.path.join(dir_path, 'music_original') # directory path for saving wav files

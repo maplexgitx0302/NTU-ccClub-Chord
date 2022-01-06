@@ -10,7 +10,7 @@ import librosa
 import sounddevice as sd
 import ccchord
 
-dir_path     = os.path.abspath('')
+dir_path  = os.path.dirname(__file__)
 trim_path = os.path.join(dir_path, 'music_trim')
 
 def play_sound(y, sr, stop_time=-1):

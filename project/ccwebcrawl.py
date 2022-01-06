@@ -1,7 +1,7 @@
 import os
 from selenium import webdriver
 
-dir_path = os.path.dirname(os.path.realpath(__file__)) # directory path of the ccClub project
+dir_path = os.path.dirname(__file__) # directory path of the ccClub project
 
 def yt_playlist(playlist_url):
     print(f'Now crawling {playlist_url} ... ', end='')
