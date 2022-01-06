@@ -79,13 +79,13 @@ def chord_simplify(chord):
     if chord_major.union(chord_set) == chord_major or chord_minor.union(chord_set) == chord_minor:
         # already major chord or minor chord
         return chord
-    elif 'maj7' in chord or 'sus4' in chord:
-        # strange chords to explicitly transform
-        return chord
-    elif '7' in chord:
-        # x7, x7-5, x7+5 -> x7
-        return chord[:chord.index('7')] + '7'
-    elif 'm' in chord:
+    # elif 'maj7' in chord or 'sus4' in chord:
+    #     # strange chords to explicitly transform
+    #     return chord
+    # elif '7' in chord:
+    #     # x7, x7-5, x7+5 -> x7
+    #     return chord[:chord.index('7')] + '7'
+    elif 'm' in chord and 'dim' not in chord and 'maj' not in chord:
         return chord[:chord.index('m')] + 'm'
     elif '#' in chord:
         return chord[:chord.index('#')] + '#'
@@ -93,7 +93,7 @@ def chord_simplify(chord):
         return chord[:chord.index('b')] + 'b'
     else:
         # strange chords we do NOT want
-        strange_chord_list = ['sus2', 'add9', '11']
+        strange_chord_list = ['sus2', 'add9', '11', 'maj7', 'sus4', '7', 'dim']
         for strange_chord in strange_chord_list:
             if strange_chord in chord:
                 return chord[0]
@@ -127,29 +127,29 @@ def chord_numeralize(chord, capo=0, major_pitch_weight=1):
         chord_array[pitch] += 1 * major_pitch_weight
         chord_array[(pitch + 3)%12] += 1
         chord_array[(pitch + 3 + 4)%12] += 1
-    elif 'sus4' in chord:
-        # sus4 : 1 4 5
-        chord_array[pitch] += 1 * major_pitch_weight
-        chord_array[(pitch + 5)%12]
-        chord_array[(pitch + 5 + 2)%12] += 1
-    elif 'maj7' in chord:
-        # maj7 : 1 3 5 7
-        chord_array[pitch] += 1 * major_pitch_weight
-        chord_array[(pitch + 4)%12] += 1
-        chord_array[(pitch + 4 + 3)%12] += 1
-        chord_array[(pitch + 4 + 3 + 4)%12] += 1
-    elif 'm7' in chord:
-        # m7 : 1 b3 5 b7
-        chord_array[pitch] += 1 * major_pitch_weight
-        chord_array[(pitch + 3)%12] += 1
-        chord_array[(pitch + 3 + 4)%12] += 1
-        chord_array[(pitch + 3 + 4 + 3)%12] += 1
-    elif '7' in chord:
-        # 7 : 1 3 5 b7
-        chord_array[pitch] += 1 * major_pitch_weight
-        chord_array[(pitch + 4)%12] += 1
-        chord_array[(pitch + 4 + 3)%12] += 1
-        chord_array[(pitch + 4 + 3 + 3)%12] += 1
+    # elif 'sus4' in chord:
+    #     # sus4 : 1 4 5
+    #     chord_array[pitch] += 1 * major_pitch_weight
+    #     chord_array[(pitch + 5)%12]
+    #     chord_array[(pitch + 5 + 2)%12] += 1
+    # elif 'maj7' in chord:
+    #     # maj7 : 1 3 5 7
+    #     chord_array[pitch] += 1 * major_pitch_weight
+    #     chord_array[(pitch + 4)%12] += 1
+    #     chord_array[(pitch + 4 + 3)%12] += 1
+    #     chord_array[(pitch + 4 + 3 + 4)%12] += 1
+    # elif 'm7' in chord:
+    #     # m7 : 1 b3 5 b7
+    #     chord_array[pitch] += 1 * major_pitch_weight
+    #     chord_array[(pitch + 3)%12] += 1
+    #     chord_array[(pitch + 3 + 4)%12] += 1
+    #     chord_array[(pitch + 3 + 4 + 3)%12] += 1
+    # elif '7' in chord:
+    #     # 7 : 1 3 5 b7
+    #     chord_array[pitch] += 1 * major_pitch_weight
+    #     chord_array[(pitch + 4)%12] += 1
+    #     chord_array[(pitch + 4 + 3)%12] += 1
+    #     chord_array[(pitch + 4 + 3 + 3)%12] += 1
     else:
         assert False, print(f"Please Check Your Chord -> {chord}")
     # return chord_array / np.linalg.norm(chord_array)
@@ -164,7 +164,8 @@ def chord_inverse(chord_nparray, num_candidate=3, capo=0):
     capo_pitch = []
     for i in range(12):
         capo_pitch.append(candidate_pitch[(i-capo)%12])
-    suffix = ['', 'm', 'sus4', 'maj7', 'm7', '7']
+    # suffix = ['', 'm', 'sus4', 'maj7', 'm7', '7']
+    suffix = ['', 'm']
     for i in range(len(candidate_pitch)):
         for j in range(len(suffix)):
             chord = chord_numeralize(candidate_pitch[i]+suffix[j], capo=0, major_pitch_weight=1)
