@@ -4,3 +4,4 @@
 *.mp4
 *.pth
 *DS_Store
+*__pycache__
