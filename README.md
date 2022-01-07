@@ -1,7 +1,9 @@
 # Predicting Chords with Machine Learning
 
 ## About the project
-In this project, we use modern machine learning skills to build a model, and try to predict the chords of a given song. The input data (data fed into the model) will be the **Fourier Frequency Amplitude** extracted from the training data (see the *.xlsx* file) using Fourier analysis. The output (prediction) of the model will be chords, which will be transformed into a numeric array.
+In this project (see 'project' directory above), we use modern machine learning skills to build a model, and try to predict the chords of a given song. The input data (data fed into the model) will be the **Fourier Frequency Amplitude** extracted from the training data (see the *.xlsx* file) using Fourier analysis. The output (prediction) of the model will be chords, which will be transformed into a numeric array.
+
+See slide introduction of the project : [ccClub - Chord](https://docs.google.com/presentation/d/1WBkZJQ0kPvZTtnDEnendAcTQ_kkzUiDXsWbk2ehmlug/edit?usp=sharing)
 
 ---
 

@@ -5,3 +5,5 @@
 *.pth
 *DS_Store
 *__pycache__
+
+!ccClub - Chord.pdf
